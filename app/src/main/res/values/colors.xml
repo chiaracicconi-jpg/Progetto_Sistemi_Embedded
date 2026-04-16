@@ -2,7 +2,7 @@
 <resources>
 
     <color name="violet">#1E1035</color>
-    <color name="grey">#7E6ECC</color>
+    <color name="grey">#CCCCCC</color>
 
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
