@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <color name="violet">#D52E1745</color>
-    <color name="light_violet">#30FFFFFF</color>
+    <color name="violet">#F32E1745</color>
+    <color name="light_violet">#7B50A4</color>
+    <color name="light_white">#30FFFFFF</color>
     <color name="grey">#CCCCCC</color>
     <color name="light_black">#69000000</color>
 

@@ -1,6 +1,7 @@
 package com.unipd.dei2026.simon
 
 import android.content.res.Configuration
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -29,18 +30,16 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalWindowInfo
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
+
 
 
 @Composable
@@ -99,7 +98,9 @@ fun Activity1( onButtonClicked: (String)-> Unit){
                     c=0
                 },
                 shape = RoundedCornerShape(6.dp),
-                colors = ButtonDefaults.buttonColors(containerColor=colorResource(R.color.light_violet))
+                colors = ButtonDefaults.buttonColors(containerColor=colorResource(R.color.light_white)),
+                border = BorderStroke(1.dp, colorResource(R.color.white)),
+                elevation= ButtonDefaults.buttonElevation(pressedElevation=5.dp)
             ) {
                 Text(text = stringResource(R.string.delete),
                     style= TextStyle(fontSize=15.sp, fontFamily = FontFamily.Serif, fontWeight = FontWeight.Medium))
@@ -117,7 +118,9 @@ fun Activity1( onButtonClicked: (String)-> Unit){
                         c=0
                     },
                 shape = RoundedCornerShape(6.dp),
-                colors = ButtonDefaults.buttonColors(containerColor=colorResource(R.color.light_violet))
+                colors = ButtonDefaults.buttonColors(containerColor=colorResource(R.color.light_white)),
+                border = BorderStroke(1.dp, colorResource(R.color.white)),
+                elevation= ButtonDefaults.buttonElevation(pressedElevation=5.dp)
 
             ) {
                 Text(text = stringResource(R.string.endOf_game),
@@ -197,7 +200,11 @@ fun ColoredButton(modifier:Modifier=Modifier,
             countChanged(plusOne)
                   },
         colors = ButtonDefaults.buttonColors(containerColor=colorResource(color)),
-        modifier = modifier.padding(2.dp).width(160.dp).height(130.dp),
+        modifier = modifier.padding(2.dp).width(160.dp).height(130.dp)
+            .shadow(elevation=12.dp,
+                    shape=RoundedCornerShape(15.dp),
+                    ambientColor = colorResource(R.color.black)),
         shape= RoundedCornerShape(15.dp)
+
     ) {}
 }
