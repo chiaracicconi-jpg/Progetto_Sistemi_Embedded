@@ -44,31 +44,62 @@ import androidx.compose.ui.text.font.FontWeight
 
 @Composable
 fun Activity1( onButtonClicked: (String)-> Unit){
+
+    //Definisco 4 variabili utili all'interno del codice
+        // t: String -> contiene la sequenza corrente di valori corrispondenti ai pulsanti premuti (es: R, M, Y, G, C, B)
+        //              la stringa termina dopo aver premuto uno dei due pulsanti: Cancella o Fine Partita
+        //              Cancella: tutti i valori vengono persi, t viene reinizializzata a t=""
+        //              Fine Partita: tutti i valori vengono salvati nella stringa playedMatches, t viene reinizializzata a t=""
+        // c:Int -> contiene il numero di pulsanti colorati premuti (quando non viene premuto nessun pulsante c=0)
+        //              il conteggio termina dopo aver premuto uno dei due pulsanti: Cancella o Fine Partita
+        //              Cancella: tutti i valori vengono persi, c viene reinizializzato a c=0
+        //              Fine Partita: tutti i valori vengono salvati nella stringa playedMatches, c viene reinizializzato a c=0
+        // orientation: Int ->  realizzata sulla base del codice dell'applicazione ManageOrientation (Composable)
+        //                      in base alla modalità in cui si trova il telefono, Landscape o Portrait, cambia il layout
+        // playedMatches: String -> contiene tutte le sequenze relative alle partite giocate (c-t)
+        //                          è il parametro che viene passato dalla funzione onButtonClicked alla seconda schermata
+        //                          contiene "|" come parametro divisore tra una sequenza (1 partita) e un'altra
+        //                          non viene reinizializzato al click dei pulsanti Cancella o Fine Partita, ma quando termina l'applicazione
+
+
     var t by rememberSaveable {mutableStateOf("")}
     var c by rememberSaveable {mutableStateOf(0)}
     var playedMatches by rememberSaveable {mutableStateOf("")}
     val orientation = LocalConfiguration.current.orientation
+
+    //importo l'immagine simongame1 nella directory res>drawable
+    // Uso la classe Box come contenitore in cui inserire l'elemento Image in cui viene visualizzata la risorsa grafica
+
     Box(modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center ) {
         Image(
             painter = painterResource(R.drawable.simongame1),
             contentDescription = null,
             modifier = Modifier.size(170.dp),
+            //uso l'istruzione alpha per rendere opaco il disegno in background
             alpha = 0.28f,
         )
     }
+
+    //Uso una classe Column come contenitore in cui inserire i pulsanti colorati
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(10.dp),
         horizontalAlignment =Alignment.CenterHorizontally
     ) {
+        //[commentato a partire dalla riga 165]
         CreateRows(text = t, textUpdated = { t = it }, oriented = orientation, counting=c, countUpdate={c=it})
     }
+    //Uso una classe Column come contenitore in cui inserire la stringa di testo e i pulsanti Cancella e Fine Partita
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(18.dp),
+
+        //sfrutto la variabile orientation per definire le condizioni in cui collocare la stringa di testo e i due pulsanti
+        // modalità Portrait -> sono centrati in basso
+        // modalità Landscape-> sono centrati a destra
         horizontalAlignment = if (orientation==Configuration.ORIENTATION_PORTRAIT){
             Alignment.CenterHorizontally }
             else{ Alignment.End
@@ -78,12 +109,16 @@ fun Activity1( onButtonClicked: (String)-> Unit){
         }else{ Arrangement.Center}
     ) {
         Text(
-            modifier = Modifier.width(300.dp).background(colorResource(R.color.light_black))
+            modifier = Modifier.width(260.dp).background(colorResource(R.color.light_black))
+
+                //inserisco un modificatore per stabilire i limiti di altezza della mia barra di testo
                 .heightIn(10.dp, 100.dp)
+                //aggiungo una barra di scorrimento verticale per leggere il testo dopo che viene superato il limite massimo
                 .verticalScroll(rememberScrollState()),
             text = t,
             color=colorResource(R.color.white),
             style = TextStyle(fontSize = 25.sp , fontFamily = FontFamily.Serif, fontWeight = FontWeight.Bold),
+            //quando il testo arriva alla fine della riga va a capo automaticamente
             softWrap=true,
 
 
@@ -94,6 +129,8 @@ fun Activity1( onButtonClicked: (String)-> Unit){
         Row {
             Button(
                 onClick = {
+                    //funzionalità della classe Button:
+                    //inizializza i valori della stringa e del conteggio al Click
                     t=""
                     c=0
                 },
@@ -106,8 +143,18 @@ fun Activity1( onButtonClicked: (String)-> Unit){
                     style= TextStyle(fontSize=15.sp, fontFamily = FontFamily.Serif, fontWeight = FontWeight.Medium))
             }
             Spacer(modifier = Modifier.width(30.dp))
+
+            //nel Button di Fine Partita vado a salvare, aggiungendole in coda, le sequenze corrispondenti a ciascuna partita
+            // tra una sequenza e l'altra inserisco un separatore "|"
+            // "|" mi servirà nella schermata 2 per separare le singole sequenze
             Button(
                 onClick = {
+                    //converto la variabile c: Int in String
+                    // inserisco "|" anche tra il conteggio e l'elenco
+                    //imposto le condizioni per le sequenze da aggiungere alla stringa complessiva
+                    // se playedMatches è vuota, diventa la sequenza corrente
+                    // se playedMatches non è vuota aggiungo in coda la sequenza corrente
+                    // azzero il conteggio e la sequenza
                     val sequence= " $c |  "+ t
                     playedMatches=if (playedMatches.isEmpty()) {
                             sequence
@@ -134,6 +181,11 @@ fun Activity1( onButtonClicked: (String)-> Unit){
 
 
 
+//creo una funzione compostable CreateRows che mi crea, in una colonna, 3 righe in cui inserire i bottoni
+//inserisco due disposizioni a seconda della modalità Landscape o Portrait
+//Portrait: i bottoni sono in alto al centro dello schermo
+//Landscape: i bottoni sono a sinistra dello schermo (viene cambiata
+//la struttura dei bottoni viene definita nella funzione ColoredButton
 @Composable
 fun CreateRows( text: String, textUpdated:(String)->Unit, oriented: Int, counting:Int, countUpdate:(Int)->Unit){
     if (oriented==Configuration.ORIENTATION_PORTRAIT){
@@ -183,6 +235,12 @@ fun CreateRows( text: String, textUpdated:(String)->Unit, oriented: Int, countin
 
 }
 
+
+//Nella funzione ColoredButton viene definito il valore di default del modifier
+//in modifier vengoni impostati i margini, larghezza e altezza e la funzione shadow
+//per impostare l'elevation, ovvero la distanza tra la superficie di un elemento e lo sfondo
+
+
 @Composable
 fun ColoredButton(modifier:Modifier=Modifier,
                   char:Char, color:Int,
@@ -192,10 +250,14 @@ fun ColoredButton(modifier:Modifier=Modifier,
                   countChanged:(Int)->Unit){
     Button(
         onClick = {
+            //al Click viene incrementato di 1 il punteggio e aggiornata la stringa di testo t
             val comma =if (text.isEmpty()) "" else ", "
             val textChanged=text+ comma+ char
             val plusOne=countButton+1
 
+            //uso delle funzioni di callback
+            //stringChanged: aggiorna la variabile t
+            //countChanged: aggiorna la variabile c
             stringChanged(textChanged)
             countChanged(plusOne)
                   },

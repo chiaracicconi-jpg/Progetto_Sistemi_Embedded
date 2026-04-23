@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <color name="violet">#F32E1745</color>
+    <color name="violet">#210D2F</color>
     <color name="light_violet">#7B50A4</color>
     <color name="light_white">#30FFFFFF</color>
     <color name="grey">#CCCCCC</color>
@@ -11,11 +11,11 @@
     <color name="white">#FFFFFFFF</color>
     <color name="light_yellow">#EBFDFF81</color>
 
-    <color name="red">#FF0000</color>
-    <color name="magenta">#FF00FF</color>
-    <color name="yellow">#FFFF00</color>
-    <color name="green">#00FF00</color>
-    <color name="cyan">#00FFFF</color>
-    <color name="blue">#0000FF</color>
+    <color name="red">#FF1744</color>
+    <color name="magenta">#D500F9</color>
+    <color name="yellow">#FFEA00</color>
+    <color name="green">#00E676</color>
+    <color name="cyan">#00E5FF</color>
+    <color name="blue">#3D5AFE</color>
 
 </resources>
