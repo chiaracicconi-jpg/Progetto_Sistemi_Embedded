@@ -1,6 +1,8 @@
 package com.unipd.dei2026.simon
 
 
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -10,20 +12,27 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.OutlinedTextFieldDefaults.Container
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
@@ -33,9 +42,10 @@ fun Activity2(allMatches:String, onBackClicked:()->Unit, modifier: Modifier=Modi
     val matchesList = allMatches.split("|")
     val sequences = matchesList.filterIndexed { ind, _ -> ind % 2 != 0 }
     val counting = matchesList.filterIndexed { ind, _ -> ind % 2 == 0 }
-    Column(modifier = Modifier.fillMaxSize()) {
+    Box(modifier = Modifier.fillMaxSize()) {
+
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth().padding(12.dp),
             horizontalArrangement = Arrangement.Absolute.Right
         ) {
             Text(
@@ -49,14 +59,16 @@ fun Activity2(allMatches:String, onBackClicked:()->Unit, modifier: Modifier=Modi
 
         Row(modifier = Modifier.fillMaxWidth().padding(10.dp)) {
 
-            LazyColumn(modifier = Modifier.weight(0.1f)) {
+            LazyColumn(modifier = Modifier.weight(0.15f)) {
                 items(counting) { count ->
                     Text(
+                        modifier=Modifier.padding(2.dp)
+                            .background(colorResource(R.color.light_violet), shape = RectangleShape),
                         text = count,
                         style = TextStyle(
                             fontSize = 22.sp,
                             fontFamily = FontFamily.Serif,
-                            fontWeight = FontWeight.Medium
+                            fontWeight = FontWeight.Bold
                         ),
                         color = colorResource(R.color.white),
                         maxLines = 1,
@@ -65,16 +77,35 @@ fun Activity2(allMatches:String, onBackClicked:()->Unit, modifier: Modifier=Modi
                 }
             }
 
-            LazyColumn(modifier = Modifier.weight(0.9f)) {
+            LazyColumn(modifier = Modifier.weight(0.98f)) {
                 items(sequences) { sequence ->
+                    val textSeq = buildAnnotatedString {
+                        sequence.forEach { char ->
+                            val charColor = when (char) {
+                                'B' -> colorResource(R.color.blue)
+                                'Y' -> colorResource(R.color.yellow)
+                                'R' -> colorResource(R.color.red)
+                                'C' -> colorResource(R.color.cyan)
+                                'M' -> colorResource(R.color.magenta)
+                                'G' -> colorResource(R.color.green)
+                                else -> colorResource(R.color.white)
+                            }
+
+                            withStyle(style = SpanStyle(color=charColor)) {
+                                append(char)
+                            }
+                        }
+
+                    }
+
                     Text(
-                        text = sequence,
+                        modifier = Modifier.padding(2.dp),
+                        text = textSeq,
                         style = TextStyle(
                             fontSize = 22.sp,
-                            fontFamily = FontFamily.Monospace,
+                            fontFamily = FontFamily.Serif,
                             fontWeight = FontWeight.Medium
                         ),
-                        color = colorResource(R.color.light),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )

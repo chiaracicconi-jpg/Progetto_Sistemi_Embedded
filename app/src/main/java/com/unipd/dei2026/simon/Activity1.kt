@@ -66,12 +66,14 @@ fun Activity1( onButtonClicked: (String)-> Unit){
         }else{ Arrangement.Center}
     ) {
         Text(
-            modifier = Modifier.width(300.dp).background(colorResource(R.color.grey))
+            modifier = Modifier.width(300.dp).background(colorResource(R.color.light_black))
                 .heightIn(10.dp, 100.dp)
                 .verticalScroll(rememberScrollState()),
             text = t,
-            style = TextStyle(fontSize = 22.sp ,fontWeight = FontWeight.Bold),
+            color=colorResource(R.color.white),
+            style = TextStyle(fontSize = 25.sp , fontFamily = FontFamily.Serif, fontWeight = FontWeight.Bold),
             softWrap=true,
+
 
         )
 
@@ -83,14 +85,16 @@ fun Activity1( onButtonClicked: (String)-> Unit){
                     t=""
                     c=0
                 },
-                shape = RectangleShape
+                shape = RoundedCornerShape(6.dp),
+                colors = ButtonDefaults.buttonColors(containerColor=colorResource(R.color.light_violet))
             ) {
-                Text(text = stringResource(R.string.delete))
+                Text(text = stringResource(R.string.delete),
+                    style= TextStyle(fontSize=15.sp, fontFamily = FontFamily.Serif, fontWeight = FontWeight.Medium))
             }
             Spacer(modifier = Modifier.width(30.dp))
             Button(
                 onClick = {
-                    val sequence= "$c|  "+ t
+                    val sequence= " $c |  "+ t
                     playedMatches=if (playedMatches.isEmpty()) {
                             sequence
                     }else {"$playedMatches|$sequence"}
@@ -99,10 +103,12 @@ fun Activity1( onButtonClicked: (String)-> Unit){
                         t=""
                         c=0
                     },
-                shape = RectangleShape
+                shape = RoundedCornerShape(6.dp),
+                colors = ButtonDefaults.buttonColors(containerColor=colorResource(R.color.light_violet))
 
             ) {
-                Text(text = stringResource(R.string.endOf_game))
+                Text(text = stringResource(R.string.endOf_game),
+                    style= TextStyle(fontSize=15.sp, fontFamily = FontFamily.Monospace, fontWeight = FontWeight.Medium))
             }
             Spacer(modifier = Modifier.height(100.dp))
         }

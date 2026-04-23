@@ -1,12 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <color name="violet">#1E1035</color>
+    <color name="violet">#D52E1745</color>
+    <color name="light_violet">#30FFFFFF</color>
     <color name="grey">#CCCCCC</color>
+    <color name="light_black">#69000000</color>
 
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="light">#EBFDFF81</color>
+    <color name="light_yellow">#EBFDFF81</color>
 
     <color name="red">#FF0000</color>
     <color name="magenta">#FF00FF</color>

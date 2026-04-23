@@ -4,4 +4,6 @@
 **Dispositivo fisico** ZTE Z2472 Blade A36
 **Versione Android** Android 15
 **Emulatore** Pixel 2
-**Livello API** API 37.0(Extention Level 22)
+**Versione Android** Android 14
+**Livello API** API 34.0(Extention Level 8)
+
