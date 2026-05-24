@@ -50,7 +50,7 @@ import com.unipd.dei2026.simon.ui.theme.FontText
 
 
 @Composable
-fun MatchHistory(simonViewModel: SimonViewModel, onPlayClicked:()->Unit, onMatchClicked:(Int,String)->Unit) {
+fun MatchHistory(simonViewModel: SimonViewModel,  onPlayClicked:()->Unit, onMatchClicked:(Int,String)->Unit) {
     //Definisco 3 variabili utili all'interno del codice
     //matchesList:List<String> -> contiene una lista di stringhe ottenuta tramite la funzione split del parametro allMatches (passato da Activity1);
     //                            viene usata per la definizione delle due variabili successive sequences, counting
@@ -66,6 +66,8 @@ fun MatchHistory(simonViewModel: SimonViewModel, onPlayClicked:()->Unit, onMatch
     //importo l'immagine simongame1 nella directory res>drawable
     // Uso la classe Box come contenitore in cui inserire l'elemento Image in cui viene visualizzata la risorsa grafica
     val orientation=LocalConfiguration.current.orientation
+
+
     Box(
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
@@ -85,7 +87,9 @@ fun MatchHistory(simonViewModel: SimonViewModel, onPlayClicked:()->Unit, onMatch
             SimonBlinkText(text1="SIMON", text2="BLINK", configuration=orientation)
             //Inserisco gli elementi corrispondenti a ciascuna partita nel contenitore a scorrimento verticale,
             // Lazy Column permette di mostrare tutta la cronologia delle partite giocate in modo fluido
-            val sequences = simonViewModel.correctedSeq
+            val sequences = simonViewModel.correctedSeq.reversed()
+            Spacer(modifier=Modifier.height(12.dp))
+
             LazyColumn(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -213,7 +217,9 @@ private fun MatchRow(
                     colorResource(R.color.light_white),
                     shape = RoundedCornerShape(4.dp)
                 ),
-            text = "$playerIndex",
+            text = if (playerIndex==currentSeq.length) {"$playerIndex"}
+            else{ val score=currentSeq.length-1
+                "$score"},
             style = TextStyle(
                 fontSize = 20.sp,
                 fontFamily = FontText

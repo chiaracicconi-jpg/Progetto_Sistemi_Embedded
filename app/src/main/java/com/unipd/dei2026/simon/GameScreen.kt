@@ -75,6 +75,7 @@ fun GameScreen( simonViewModel: SimonViewModel,
 
     BackHandler() {
         simonViewModel.endGame()
+        simonViewModel.resetGame()
         onButtonClicked()
     }
     //importo l'immagine simongame1 nella directory res>drawable
@@ -445,6 +446,7 @@ fun CreateStringButtons(
             // "|" mi servirà nella schermata 2 per separare le singole sequenze
             Button(
                 onClick = {viewModel.endGame()
+                    viewModel.resetGame()
                     nextActivity()
                           },
                 enabled=!viewModel.gameOver,

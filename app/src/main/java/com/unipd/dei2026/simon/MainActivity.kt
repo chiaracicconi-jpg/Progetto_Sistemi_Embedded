@@ -33,6 +33,7 @@ class MainActivity : ComponentActivity() {
             SimonTheme {
                 val navController = rememberNavController()
                 val mainViewModel: SimonViewModel=viewModel()
+
                 // Creo lo Scaffold che costituirà l'impalcatura del mio codice,
                 // Vado a impostare il colore del background
 
