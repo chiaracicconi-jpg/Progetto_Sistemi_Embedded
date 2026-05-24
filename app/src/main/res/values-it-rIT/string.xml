@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Gioco di Simon</string>
-    <string name="endOf_game">Fine Partita</string>
-    <string name="start">Inizio Partita</string>
+    <string name="endOf_game">Fine</string>
+    <string name="start">Inizio</string>
     <string name="pause">Pausa</string>
-    <string name="title1">Simon</string>
-    <string name="title2">Blink</string>
     <string name="turn"> Ora è il tuo turno !</string>
     <string name="resume">Riprendi </string>
 </resources>

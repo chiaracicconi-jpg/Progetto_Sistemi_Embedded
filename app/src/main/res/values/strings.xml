@@ -1,10 +1,8 @@
 <resources>
     <string name="app_name">Simon Game</string>
-    <string name="endOf_game">End Game</string>
+    <string name="endOf_game">End</string>
     <string name="start">Start </string>
     <string name="pause">Pause</string>
-    <string name="title1">Simon</string>
-    <string name="title2">Blink</string>
     <string name="turn">Now it is your turn !</string>
     <string name="resume">Resume</string>
 

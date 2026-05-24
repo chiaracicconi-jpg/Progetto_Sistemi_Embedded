@@ -13,6 +13,7 @@ import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import kotlinx.coroutines.delay
 
@@ -21,12 +22,14 @@ class SimonViewModel(application:Application):AndroidViewModel(application) {
     var startMatch by mutableStateOf(false)
     var isComputerTurn by mutableStateOf(false)
     var buttonTurnedOn by mutableStateOf<Char?>(null)
+        private set
     var gameOver by mutableStateOf(false)
-    var correctedSeq by mutableStateOf("")
+    var correctedSeq by mutableStateOf(listOf<String>())
     var enabled by mutableStateOf(true)
 
     var pressed by mutableStateOf(false)
     var isPaused by mutableStateOf(false)
+
 
 
     private var computerSeq=""
@@ -49,9 +52,7 @@ class SimonViewModel(application:Application):AndroidViewModel(application) {
     }
 
     fun buttonPauseEnabled() :Boolean {
-        return if (isComputerTurn==true && !gameOver ){
-           true}
-        else {false}
+        return  (isComputerTurn==true && !gameOver )
     }
     fun buttonPausePressed(){
         isPaused=!isPaused
@@ -74,9 +75,9 @@ class SimonViewModel(application:Application):AndroidViewModel(application) {
                         }
                     }
 
-                    delay(400)
+                    delay(300)
                     buttonTurnedOn=char
-                    delay(800)
+                    delay(700)
                     buttonTurnedOn=null
                 }
 
@@ -86,7 +87,7 @@ class SimonViewModel(application:Application):AndroidViewModel(application) {
     }
 
     fun playerTurn(char:Char){
-        if (isComputerTurn==true){
+        if (!startMatch || isComputerTurn==true){
             return
         }
 
@@ -103,11 +104,36 @@ class SimonViewModel(application:Application):AndroidViewModel(application) {
         else{
             gameOver=true
             startMatch=false
+
+            val gamePlayed="$playerIndex $computerSeq"
+            correctedSeq=correctedSeq+gamePlayed
         }
-        //sequenza corretta che recupero dalla private var per poter
-        //scrivere nella schermata partite la sequenza giusta
-        correctedSeq=computerSeq
-        correctedSeq.map{it.toString()}.joinToString(", ")
+    }
+    fun endGame() {
+        if (startMatch && !gameOver) {
+            if (computerSeq.length == 1) {
+                resetGame()
+            } else {
+                startMatch = false
+
+                val char = "$playerIndex $computerSeq"
+                correctedSeq = correctedSeq + char
+
+            }
+        }
+    }
+
+    fun resetGame(){
+        t=""
+        startMatch=false
+        isComputerTurn=false
+        gameOver=false
+        buttonTurnedOn=null
+        computerSeq=""
+        playerIndex=0
+        enabled=true
+        pressed=false
+        isPaused=false
 
     }
 

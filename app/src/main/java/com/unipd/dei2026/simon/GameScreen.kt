@@ -1,6 +1,7 @@
 package com.unipd.dei2026.simon
 
 import android.content.res.Configuration
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -50,8 +51,8 @@ import androidx.compose.ui.graphics.drawscope.Stroke
 import com.unipd.dei2026.simon.ui.theme.FontMatches
 
 @Composable
-fun GameScreen( simonViewModel: SimonViewModel=viewModel(),
-    onButtonClicked: (String)-> Unit){
+fun GameScreen( simonViewModel: SimonViewModel,
+    onButtonClicked: ()-> Unit){
 
     //Definisco 4 variabili utili all'interno del codice
     // t: String -> contiene la sequenza corrente di valori corrispondenti ai pulsanti premuti (es: R, M, Y, G, C, B);
@@ -70,9 +71,12 @@ fun GameScreen( simonViewModel: SimonViewModel=viewModel(),
     //                          non viene reinizializzato al click dei pulsanti Cancella o Fine Partita, ma una volta terminata l'applicazione
 
     val t =simonViewModel.t
-    var playedMatches by rememberSaveable {mutableStateOf("")}
     val orientation = LocalConfiguration.current.orientation
 
+    BackHandler() {
+        simonViewModel.endGame()
+        onButtonClicked()
+    }
     //importo l'immagine simongame1 nella directory res>drawable
     // Uso la classe Box come contenitore in cui inserire l'elemento Image in cui viene visualizzata la risorsa grafica
 
@@ -119,9 +123,6 @@ fun GameScreen( simonViewModel: SimonViewModel=viewModel(),
                 //[commentato a partire dalla riga 257]
                 CreateStringButtons(
                     text = t,
-                    textUpdate = { simonViewModel.t  = it },
-                    games = playedMatches,
-                    gamesUpdate = { playedMatches = it },
                     nextActivity = onButtonClicked,
                     viewModel= simonViewModel
                 )
@@ -157,9 +158,6 @@ fun GameScreen( simonViewModel: SimonViewModel=viewModel(),
                 Spacer(modifier = Modifier.height(50.dp))
                 CreateStringButtons(
                     text = t,
-                    textUpdate = { simonViewModel.t = it },
-                    games = playedMatches,
-                    gamesUpdate = { playedMatches = it },
                     nextActivity = onButtonClicked,
                     viewModel = simonViewModel
                 )
@@ -169,7 +167,10 @@ fun GameScreen( simonViewModel: SimonViewModel=viewModel(),
     if (simonViewModel.gameOver) {
         Box(modifier=Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             Box(
-                modifier = Modifier.padding(10.dp).height(200.dp).width(340.dp)
+                modifier = Modifier
+                    .padding(10.dp)
+                    .height(200.dp)
+                    .width(340.dp)
                     .background(colorResource(R.color.light_black)),
                 contentAlignment = Alignment.Center
             ) {
@@ -311,7 +312,7 @@ fun ColoredButton(modifier:Modifier=Modifier,
             viewModel.playerTurn(char)
 
         },
-        enabled=!viewModel.gameOver,
+        enabled=!viewModel.gameOver && viewModel.startMatch,
         colors = ButtonDefaults.buttonColors(
             containerColor=colorResource(colorButton),
             disabledContainerColor =colorResource(colorButton) ),
@@ -332,11 +333,9 @@ fun ColoredButton(modifier:Modifier=Modifier,
 @Composable
 fun CreateStringButtons(
     text:String,
-    textUpdate:(String)->Unit,
-    games:String,
-    gamesUpdate:(String)->Unit,
-    nextActivity: (String) -> Unit,
+    nextActivity: () -> Unit,
     viewModel: SimonViewModel){
+
 
     Column(
         modifier=Modifier.fillMaxSize(),
@@ -445,29 +444,16 @@ fun CreateStringButtons(
             // tra una sequenza e l'altra inserisco un separatore "|";
             // "|" mi servirà nella schermata 2 per separare le singole sequenze
             Button(
-                onClick = {
-                    //converto la variabile c: Int in String;
-                    // inserisco "|" anche tra il conteggio e l'elenco;
-                    //imposto le condizioni per le sequenze da aggiungere alla stringa complessiva:
-                    // se playedMatches è vuota, diventa la sequenza corrente,
-                    // se playedMatches non è vuota aggiungo in coda la sequenza corrente;
-                    // azzero il conteggio e la sequenza
-                    val count=text.filter { it.isLetter() }.length
-                    val sequence = " $count |  " + text
-                    val previousGames = if (games.isEmpty()) {
-                        sequence
-                    } else {
-                        "$games|$sequence"
-                    }
-                    gamesUpdate(previousGames)
-                    nextActivity(previousGames)
-
-                    val empty2 = ""
-                    textUpdate(empty2)
-                },
+                onClick = {viewModel.endGame()
+                    nextActivity()
+                          },
                 enabled=!viewModel.gameOver,
                 shape = RoundedCornerShape(10.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = colorResource(R.color.light_white)),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = colorResource(R.color.white),
+                    contentColor = colorResource(R.color.violet),
+                    disabledContainerColor = colorResource(R.color.light_white),
+                    disabledContentColor = colorResource(R.color.white)),
                 border = BorderStroke(1.dp, colorResource(R.color.white)),
                 elevation = ButtonDefaults.buttonElevation(pressedElevation = 5.dp)
 
