@@ -43,11 +43,14 @@ class SimonViewModel(application:Application,
 
 
     private var computerSeq: String
-        get()=state["computer_seq"] ?: ""
-        set(value) {state["computer_seq"]=value}
+        get()=state["computerSeq"] ?: ""
+        set(value) {state["computerSeq"]=value}
     private var playerIndex: Int
         get()=state["playerIndex"] ?:0
         set(value) {state["playerIndex"]=value}
+    private var computerIndex: Int
+        get()=state["computerIndex"] ?: 0
+        set(value) {state["computerIndex"]=value}
 
     init{
         val gamesDao= GameRoomDatabase.getDatabase(application).gameDao()
@@ -101,9 +104,11 @@ class SimonViewModel(application:Application,
                 if (newColor) {
                     val colors = listOf('R', 'M', 'Y', 'G', 'C', 'B')
                     computerSeq += colors.random()
+                    computerIndex=0
                 }
 
-                for (char in computerSeq){
+                while(computerIndex<computerSeq.length){
+                    val char= computerSeq[computerIndex]
                     if (isPaused) {
                         buttonTurnedOn = null
 
@@ -116,8 +121,10 @@ class SimonViewModel(application:Application,
                     buttonTurnedOn=char
                     delay(700)
                     buttonTurnedOn=null
-                }
 
+                    computerIndex+=1
+                }
+            computerIndex=0
             isComputerTurn=false
 
         }
@@ -170,6 +177,7 @@ class SimonViewModel(application:Application,
         enabled=true
         pressed=false
         isPaused=false
+        computerIndex=0
 
     }
 

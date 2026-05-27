@@ -37,7 +37,9 @@ fun DetailScreen(
         Text(
             modifier = Modifier
                 .padding(2.dp),
-            text = "$score",
+            text = if (score==data.length) {"$score"}
+            else{ val index=data.length-1
+                "$index"},
             style = TextStyle(
                 fontSize = 80.sp,
                 fontFamily = FontKey

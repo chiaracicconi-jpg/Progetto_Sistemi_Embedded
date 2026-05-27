@@ -46,8 +46,10 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.platform.LocalContext
 import com.unipd.dei2026.simon.ui.theme.FontMatches
 
 @Composable
@@ -72,6 +74,17 @@ fun GameScreen( simonViewModel: SimonViewModel,
 
     val t =simonViewModel.t
     val orientation = LocalConfiguration.current.orientation
+
+    val context= LocalContext.current
+    val soundManager=remember { SoundManager(context) }
+    LaunchedEffect(simonViewModel.buttonTurnedOn) {
+        val char=simonViewModel.buttonTurnedOn
+        if (char!=null){
+        soundManager.playSound(char)}
+    }
+    DisposableEffect(Unit) {
+        onDispose { soundManager.release()} }
+
 
     BackHandler() {
         simonViewModel.endGame()
@@ -108,7 +121,8 @@ fun GameScreen( simonViewModel: SimonViewModel,
                     text = t,
                     textUpdated = { simonViewModel.t = it },
                     oriented = orientation,
-                    viewModel= simonViewModel)
+                    viewModel= simonViewModel,
+                    soundManager = soundManager)
             }
             //sfrutto la variabile orientation per definire le condizioni in cui collocare la stringa di testo e i due pulsanti Cancella e Fine Partita
             // modalità Portrait -> sono centrati orizzontalmnete e spostati in basso;
@@ -147,7 +161,8 @@ fun GameScreen( simonViewModel: SimonViewModel,
                     text = t,
                     textUpdated = { simonViewModel.t = it },
                     oriented = orientation,
-                    viewModel = simonViewModel
+                    viewModel = simonViewModel,
+                    soundManager = soundManager
                 )
             }
             Column(
@@ -214,23 +229,23 @@ fun GameScreen( simonViewModel: SimonViewModel,
 //Landscape: i bottoni sono a sinistra dello schermo (viene cambiata la struttura dei bottoni);
 //la struttura e le caratteristiche di ciascun bottone sono definite nella funzione ColoredButton
 @Composable
-fun CreateRows( text: String, textUpdated:(String)->Unit, oriented: Int, viewModel: SimonViewModel){
+fun CreateRows( text: String, textUpdated:(String)->Unit, oriented: Int, viewModel: SimonViewModel, soundManager: SoundManager){
     if (oriented==Configuration.ORIENTATION_PORTRAIT){
         Column(
             horizontalAlignment =Alignment.CenterHorizontally
         ){
             Spacer(modifier=Modifier.height(50.dp))
             Row  {
-                ColoredButton(text=text, stringChanged = textUpdated , color= R.color.red, glowColor = R.color.glowRed, char='R', viewModel=viewModel )
-                ColoredButton(text=text, stringChanged = textUpdated , color= R.color.magenta, glowColor = R.color.glowMagenta, char='M',  viewModel=viewModel)
+                ColoredButton(text=text, stringChanged = textUpdated , color= R.color.red, glowColor = R.color.glowRed, char='R', viewModel=viewModel, soundManager = soundManager )
+                ColoredButton(text=text, stringChanged = textUpdated , color= R.color.magenta, glowColor = R.color.glowMagenta, char='M',  viewModel=viewModel, soundManager = soundManager)
             }
             Row  {
-                ColoredButton(text=text, stringChanged = textUpdated , color= R.color.yellow, glowColor = R.color.glowYellow, char='Y', viewModel=viewModel)
-                ColoredButton(text=text, stringChanged = textUpdated , color= R.color.green, glowColor = R.color.glowGreen, char='G',  viewModel=viewModel)
+                ColoredButton(text=text, stringChanged = textUpdated , color= R.color.yellow, glowColor = R.color.glowYellow, char='Y', viewModel=viewModel, soundManager = soundManager)
+                ColoredButton(text=text, stringChanged = textUpdated , color= R.color.green, glowColor = R.color.glowGreen, char='G',  viewModel=viewModel, soundManager = soundManager)
             }
             Row  {
-                ColoredButton(text=text, stringChanged = textUpdated , color= R.color.cyan, glowColor = R.color.glowCyan, char='C', viewModel=viewModel)
-                ColoredButton(text=text, stringChanged = textUpdated , color= R.color.blue, glowColor = R.color.glowBlue, char='B',  viewModel=viewModel)
+                ColoredButton(text=text, stringChanged = textUpdated , color= R.color.cyan, glowColor = R.color.glowCyan, char='C', viewModel=viewModel, soundManager = soundManager)
+                ColoredButton(text=text, stringChanged = textUpdated , color= R.color.blue, glowColor = R.color.glowBlue, char='B',  viewModel=viewModel, soundManager = soundManager)
             }
         }
     }
@@ -243,30 +258,30 @@ fun CreateRows( text: String, textUpdated:(String)->Unit, oriented: Int, viewMod
             ){
                 ColoredButton(text=text,modifier=Modifier
                     .height(100.dp)
-                    .width(130.dp), stringChanged = textUpdated , color= R.color.red, glowColor = R.color.glowRed, char='R',  viewModel=viewModel)
+                    .width(130.dp), stringChanged = textUpdated , color= R.color.red, glowColor = R.color.glowRed, char='R',  viewModel=viewModel, soundManager = soundManager)
                 ColoredButton(text=text,modifier=Modifier
                     .height(100.dp)
-                    .width(130.dp), stringChanged = textUpdated , color= R.color.magenta, glowColor = R.color.glowMagenta, char='M', viewModel=viewModel)
+                    .width(130.dp), stringChanged = textUpdated , color= R.color.magenta, glowColor = R.color.glowMagenta, char='M', viewModel=viewModel, soundManager = soundManager)
             }
             Row(
                 modifier = Modifier.fillMaxWidth()
             ){
                 ColoredButton(text=text,modifier=Modifier
                     .height(100.dp)
-                    .width(130.dp), stringChanged = textUpdated , color= R.color.yellow, glowColor = R.color.glowYellow, char='Y',  viewModel=viewModel)
+                    .width(130.dp), stringChanged = textUpdated , color= R.color.yellow, glowColor = R.color.glowYellow, char='Y',  viewModel=viewModel, soundManager = soundManager)
                 ColoredButton(text=text,modifier=Modifier
                     .height(100.dp)
-                    .width(130.dp), stringChanged = textUpdated , color= R.color.green, glowColor = R.color.glowGreen, char='G',  viewModel=viewModel)
+                    .width(130.dp), stringChanged = textUpdated , color= R.color.green, glowColor = R.color.glowGreen, char='G',  viewModel=viewModel, soundManager = soundManager)
             }
             Row(
                 modifier = Modifier.fillMaxWidth()
             ){
                 ColoredButton(text=text,modifier=Modifier
                     .height(100.dp)
-                    .width(130.dp), stringChanged = textUpdated , color= R.color.cyan, glowColor = R.color.glowCyan, char='C',  viewModel=viewModel)
+                    .width(130.dp), stringChanged = textUpdated , color= R.color.cyan, glowColor = R.color.glowCyan, char='C',  viewModel=viewModel, soundManager = soundManager)
                 ColoredButton(text=text,modifier=Modifier
                     .height(100.dp)
-                    .width(130.dp), stringChanged = textUpdated , color= R.color.blue, glowColor = R.color.glowBlue, char='B',  viewModel=viewModel)
+                    .width(130.dp), stringChanged = textUpdated , color= R.color.blue, glowColor = R.color.glowBlue, char='B',  viewModel=viewModel, soundManager = soundManager)
             }
 
         }
@@ -287,17 +302,15 @@ fun ColoredButton(modifier:Modifier=Modifier,
                   glowColor:Int,
                   text:String,
                   stringChanged:(String)-> Unit,
-                  viewModel: SimonViewModel
+                  viewModel: SimonViewModel,
+                  soundManager: SoundManager
 ){
     val isGlowing=viewModel.buttonTurnedOn
 
     val clicked=remember{ MutableInteractionSource() }
     val isPressed by clicked.collectIsPressedAsState()
-    LaunchedEffect(isPressed) {
-        viewModel.buttonPressed(isPressed)
-    }
 
-    val colorButton=if ((char==isGlowing)||viewModel.pressed) glowColor else color
+    val colorButton=if ((char==isGlowing)||isPressed) glowColor else color
 
     Button(
         onClick = {
@@ -309,11 +322,12 @@ fun ColoredButton(modifier:Modifier=Modifier,
             //stringChanged: aggiorna la variabile t
             //countChanged: aggiorna la variabile c
             stringChanged(textChanged)
-
+            soundManager.playSound(char)
             viewModel.playerTurn(char)
 
         },
         enabled=!viewModel.gameOver && viewModel.startMatch,
+        interactionSource = clicked,
         colors = ButtonDefaults.buttonColors(
             containerColor=colorResource(colorButton),
             disabledContainerColor =colorResource(colorButton) ),
