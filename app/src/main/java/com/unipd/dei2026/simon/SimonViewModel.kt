@@ -19,14 +19,18 @@ import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.LiveData
 import kotlinx.coroutines.delay
 import androidx.lifecycle.SavedStateHandle
+import androidx.room.InvalidationTracker
 import kotlinx.coroutines.Dispatchers
+import androidx.lifecycle.Observer
 
 class SimonViewModel(application:Application,
     private val state:SavedStateHandle):AndroidViewModel(application) {
 
     private val repository: GameRepository
     val allGames: LiveData<List<Game>>
-
+    private val observer= Observer<List<Game>>{ gameList-> if (gameList!=null )
+        { correctedSeq=gameList.map{it.game} } }
+    val soundManager= SoundManager(application)
 
     var t : String by state.saveable{mutableStateOf("")}
     var startMatch: Boolean by state.saveable{mutableStateOf(false)}
@@ -39,7 +43,8 @@ class SimonViewModel(application:Application,
 
     var pressed: Boolean by state.saveable{mutableStateOf(false)}
     var isPaused: Boolean by state.saveable{mutableStateOf(false)}
-
+    var chooseLevel:Boolean by state.saveable { mutableStateOf(true) }
+    var hardMode: Boolean by state.saveable { mutableStateOf(true) }
 
 
     private var computerSeq: String
@@ -57,20 +62,18 @@ class SimonViewModel(application:Application,
         repository= GameRepository(gamesDao)
         allGames=repository.allGames
 
-        allGames.observeForever { gameList->
-            if (gameList!=null ){
-                correctedSeq=gameList.map{it.game}
-            }
-        }
+         allGames.observeForever(observer)
 
-        if (startMatch && isComputerTurn && !gameOver && !isPaused) {
+        if (startMatch && isComputerTurn && !gameOver) {
             computerTurn(newColor=false)}
-        if (startMatch && !isComputerTurn && !gameOver) {
-            enabled = true
-        }
     }
     fun insert(game:Game)=viewModelScope.launch(Dispatchers.IO){
         repository.insert(game)
+    }
+    override fun onCleared() {
+        super.onCleared()
+        soundManager.release()
+        allGames.removeObserver(observer)
     }
 
 
@@ -82,12 +85,14 @@ class SimonViewModel(application:Application,
             computerTurn()
         }
     }
-    fun buttonPressed(isPressed:Boolean){
-         pressed=isPressed
+
+    fun levelHard(isHard:Boolean){
+        hardMode=isHard
     }
     fun buttonEnabled(isEnabled:Boolean){
         enabled=isEnabled
     }
+
 
     fun buttonPauseEnabled() :Boolean {
         return  (isComputerTurn==true && !gameOver )
@@ -116,12 +121,17 @@ class SimonViewModel(application:Application,
                             delay(200)
                         }
                     }
-
-                    delay(300)
-                    buttonTurnedOn=char
-                    delay(700)
-                    buttonTurnedOn=null
-
+                    if (!hardMode) {
+                        delay(300)
+                        buttonTurnedOn = char
+                        delay(700)
+                        buttonTurnedOn = null
+                    }else{
+                        delay(200)
+                        buttonTurnedOn = char
+                        delay(300)
+                        buttonTurnedOn = null
+                    }
                     computerIndex+=1
                 }
             computerIndex=0
@@ -137,9 +147,10 @@ class SimonViewModel(application:Application,
         if (char==computerSeq[playerIndex]){
             playerIndex+=1
             if (playerIndex==computerSeq.length){
+                isComputerTurn=true
+                t=""
                 viewModelScope.launch{
-                    delay(1000)
-                    t=""
+                    delay(800)
                     computerTurn()
                 }
             }

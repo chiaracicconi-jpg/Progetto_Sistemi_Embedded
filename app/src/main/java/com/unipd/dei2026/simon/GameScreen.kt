@@ -46,6 +46,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.runtime.ComposableTarget
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.Stroke
@@ -75,15 +76,13 @@ fun GameScreen( simonViewModel: SimonViewModel,
     val t =simonViewModel.t
     val orientation = LocalConfiguration.current.orientation
 
-    val context= LocalContext.current
-    val soundManager=remember { SoundManager(context) }
+
+    val soundManager=simonViewModel.soundManager
     LaunchedEffect(simonViewModel.buttonTurnedOn) {
         val char=simonViewModel.buttonTurnedOn
         if (char!=null){
         soundManager.playSound(char)}
     }
-    DisposableEffect(Unit) {
-        onDispose { soundManager.release()} }
 
 
     BackHandler() {
@@ -396,8 +395,9 @@ fun CreateStringButtons(
                     //avvia al Click la partita e
                     // viene disattivato il pulsante successivamente
                     viewModel.startGame()
+                    viewModel.chooseLevel
                 },
-                enabled=viewModel.enabled,
+                enabled=!viewModel.startMatch && !viewModel.gameOver,
                 shape = RoundedCornerShape(10.dp),
                 colors = ButtonDefaults.buttonColors(
                     // Quando il pulsante è attivo ha il fondo bianco e la scritta viola scuro
@@ -463,7 +463,7 @@ fun CreateStringButtons(
                     viewModel.resetGame()
                     nextActivity()
                           },
-                enabled=!viewModel.gameOver,
+                enabled=viewModel.startMatch && !viewModel.gameOver,
                 shape = RoundedCornerShape(10.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = colorResource(R.color.white),
@@ -484,5 +484,7 @@ fun CreateStringButtons(
             }
         }
     }
+
 }
+
 
