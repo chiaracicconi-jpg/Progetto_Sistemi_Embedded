@@ -1,28 +1,26 @@
 package com.unipd.dei2026.simon
 
-import androidx.compose.foundation.background
+
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.unipd.dei2026.simon.ui.theme.DetailString
-import com.unipd.dei2026.simon.ui.theme.FontText
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.verticalScroll
 import com.unipd.dei2026.simon.ui.theme.FontKey
 
-
+//Per la schermata Dettaglio Partite ho utilizzato come prototipo quella di RecyclerSimple
+//In ingresso ho 2 parametri:
+//score:Int---> tiene conto del punteggio totalizzato dal giocatore durante ciascuna partita
+//data:String---> tiene conto della sequenza corretta generata dal computer
 @Composable
 fun DetailScreen(
     score:Int,

@@ -26,15 +26,12 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.platform.LocalConfiguration
@@ -42,54 +39,41 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import com.unipd.dei2026.simon.ui.theme.FontButtons
 import com.unipd.dei2026.simon.ui.theme.FontText
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.runtime.ComposableTarget
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.ui.graphics.StrokeJoin
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.platform.LocalContext
 import com.unipd.dei2026.simon.ui.theme.FontMatches
 
+//Nella schermata GameScreen vado a dispongo come viene visualizzato il gioco
+//vengono pertanto realizzati i pulsanti colorati e quelli di gioco e viene collegato il funzionamento del gioco
+//definito nel SimonViewModel
 @Composable
 fun GameScreen( simonViewModel: SimonViewModel,
     onButtonClicked: ()-> Unit){
 
-    //Definisco 4 variabili utili all'interno del codice
-    // t: String -> contiene la sequenza corrente di valori corrispondenti ai pulsanti premuti (es: R, M, Y, G, C, B);
-    //              la stringa termina dopo aver premuto uno dei due pulsanti: Cancella o Fine Partita;
-    //              Cancella: tutti i valori vengono persi, t viene reinizializzata a t=""
-    //              Fine Partita: tutti i valori vengono salvati nella stringa playedMatches, t viene reinizializzata a t=""
-    // c:Int -> contiene il numero di pulsanti colorati premuti (quando non viene premuto nessun pulsante c=0)
-    //              il conteggio termina dopo aver premuto uno dei due pulsanti: Cancella o Fine Partita
-    //              Cancella: tutti i valori vengono persi, c viene reinizializzato a c=0
-    //              Fine Partita: tutti i valori vengono salvati nella stringa playedMatches, c viene reinizializzato a c=0
-    // orientation: Int ->  realizzata sulla base del codice dell'applicazione ManageOrientation (Composable);
-    //                      in base alla modalità in cui si trova il telefono, Landscape o Portrait, cambia il layout
-    // playedMatches: String -> contiene tutte le sequenze relative alle partite giocate (c-t);
-    //                          è il parametro che viene passato dalla funzione onButtonClicked alla seconda schermata;
-    //                          contiene "|" come parametro divisore tra una sequenza (1 partita) e un'altra;
-    //                          non viene reinizializzato al click dei pulsanti Cancella o Fine Partita, ma una volta terminata l'applicazione
-
     val t =simonViewModel.t
     val orientation = LocalConfiguration.current.orientation
+    //la variabile orientation viene utilizzata per la disposizione degli elementi della schermata
+    //sulla base della configurazione dello schermo (Portrait o Landscape);
 
 
     val soundManager=simonViewModel.soundManager
+    //uso la variabile soundManager per implementare i metodi della classe SoundManager
     LaunchedEffect(simonViewModel.buttonTurnedOn) {
         val char=simonViewModel.buttonTurnedOn
         if (char!=null){
         soundManager.playSound(char)}
     }
 
-
+    //gestisce l'azione eseguita quando l'utente preme il tasto back di sistema
     BackHandler() {
         simonViewModel.endGame()
         simonViewModel.resetGame()
         onButtonClicked()
     }
+
     //importo l'immagine simongame1 nella directory res>drawable
     // Uso la classe Box come contenitore in cui inserire l'elemento Image in cui viene visualizzata la risorsa grafica
 
@@ -107,7 +91,6 @@ fun GameScreen( simonViewModel: SimonViewModel,
         Column(
             modifier=Modifier.fillMaxSize()
         ) {
-            //Uso una classe Row come contenitore in cui inserire i pulsanti colorati
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -115,7 +98,7 @@ fun GameScreen( simonViewModel: SimonViewModel,
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center
             ) {
-                //[commentato a partire dalla riga 171]
+
                 CreateRows(
                     text = t,
                     textUpdated = { simonViewModel.t = it },
@@ -123,10 +106,7 @@ fun GameScreen( simonViewModel: SimonViewModel,
                     viewModel= simonViewModel,
                     soundManager = soundManager)
             }
-            //sfrutto la variabile orientation per definire le condizioni in cui collocare la stringa di testo e i due pulsanti Cancella e Fine Partita
-            // modalità Portrait -> sono centrati orizzontalmnete e spostati in basso;
-            // modalità Landscape-> sono centrati verticalmente e spostati a destra;
-            Row(
+           Row(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(10.dp),
@@ -134,7 +114,7 @@ fun GameScreen( simonViewModel: SimonViewModel,
                 verticalAlignment = Alignment.Bottom,
                 horizontalArrangement = Arrangement.Center
             ) {
-                //[commentato a partire dalla riga 257]
+
                 CreateStringButtons(
                     text = t,
                     nextActivity = onButtonClicked,
@@ -179,6 +159,8 @@ fun GameScreen( simonViewModel: SimonViewModel,
             }
         }
     }
+    //Se la partita termina per un errore del giocatore appare al centro della schermata un pop-up contente la scritta
+    // "Game Over" che non viene rimosso se non attraverso il tasto "Back" di sistema
     if (simonViewModel.gameOver) {
         Box(modifier=Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             Box(
@@ -217,6 +199,9 @@ fun GameScreen( simonViewModel: SimonViewModel,
             }
         }
     }
+    //una volta premuto il tasto "Start" appare sulla schermata un pop-up con il quale è possibile impostare la modalità del gioco
+    //modalità Easy-> il gioco ha una velocità normale
+    //modalità Hard-> il gioco ha una velocità maggiore
     if (simonViewModel.chooseLevel==true) {
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             Box(
@@ -344,10 +329,11 @@ fun CreateRows( text: String, textUpdated:(String)->Unit, oriented: Int, viewMod
 
 
 //Nella funzione ColoredButton viene definito il valore di default del modifier;
-//in modifier vengoni impostati i margini, larghezza e altezza e la funzione shadow utile
-//per impostare l'elevation, ovvero la distanza tra la superficie di un elemento e lo sfondo
-
-
+//-in modifier vengoni impostati i margini, larghezza e altezza e la funzione shadow utile
+//-per impostare l'elevation, ovvero la distanza tra la superficie di un elemento e lo sfondo
+//-la variabile isGlowing controlla il lampeggiare dei pulsanti (che devono illuminarsi sia quando viene riprodotta la sequenza
+//del computer, sia quando il giocatore clicca il pulsante)
+//-la stessa cosa viene gestita dal soundManager
 @Composable
 fun ColoredButton(modifier:Modifier=Modifier,
                   char:Char,
@@ -373,12 +359,12 @@ fun ColoredButton(modifier:Modifier=Modifier,
             val textChanged=text+ comma+ char
             //uso delle funzioni di callback
             //stringChanged: aggiorna la variabile t
-            //countChanged: aggiorna la variabile c
             stringChanged(textChanged)
             soundManager.playSound(char)
             viewModel.playerTurn(char)
 
         },
+        // ciascun pulsante è attivo durante la partita
         enabled=!viewModel.gameOver && viewModel.startMatch,
         interactionSource = clicked,
         colors = ButtonDefaults.buttonColors(
@@ -397,6 +383,15 @@ fun ColoredButton(modifier:Modifier=Modifier,
 
     ) {}
 }
+
+//Nella funzione CreateStringButton() vengono creati: la stringa di testoe i pulsanti di gioco "Start", "Pause", "Resume";
+//1) nella stringa di testo viene visualizzata la sequenza riprodotta dal giocaotore
+//2) il pulsante Start: -viene disattivato una volta iniziata la partita
+//                      -permette la comparsa del pop-up con cui scegliere la modalità
+//3) il pulsante Pause: -è attivo durante il turno del computer
+//                      - se premuto si trasforma nel pulsante Resume interrompendo la riproduzione della sequenza
+//4) il pulsante End : - è attivo solo durante la partita
+//                     - se premuto fa terminare la partita e torna alla schermata iniziale
 
 @Composable
 fun CreateStringButtons(
@@ -445,7 +440,7 @@ fun CreateStringButtons(
             Button(
                 onClick = {
                     viewModel.buttonEnabled(false)
-                    //questa funzionalità della classe Button,
+                    //questa funzionalità della classe Button
                     //avvia al Click la partita e
                     // viene disattivato il pulsante successivamente
                     viewModel.chooseYourLevel(true)
@@ -482,7 +477,7 @@ fun CreateStringButtons(
                 enabled =viewModel.buttonPauseEnabled() ,
                 shape = RoundedCornerShape(10.dp),
                 colors = ButtonDefaults.buttonColors(
-                    // Quando il pulsante è attivo ha il fondo bianco e la scritta viola scuro
+                    // Quando il pulsante è attivo ha il fondo blu se non premuto, oppure rosso se premuto e la scritta bianca
                     containerColor = if (!viewModel.isPaused) {colorResource(R.color.buttonBlue)}
                     else{colorResource(R.color.buttonRed)},
                     contentColor= colorResource(R.color.white),
@@ -508,9 +503,8 @@ fun CreateStringButtons(
 
             Spacer(modifier = Modifier.width(10.dp))
 
-            //nel Button di Fine Partita vado a salvare, aggiungendole in coda, le sequenze corrispondenti a ciascuna partita
-            // tra una sequenza e l'altra inserisco un separatore "|";
-            // "|" mi servirà nella schermata 2 per separare le singole sequenze
+            //nel pulsante "End" vado a richiamare le funzioni di endGame e resumeGame del viewModel e chiamo la funzione di callback
+            //per passare alla schermata MatchHistory
             Button(
                 onClick = {viewModel.endGame()
                     viewModel.resetGame()
@@ -519,8 +513,10 @@ fun CreateStringButtons(
                 enabled=viewModel.startMatch && !viewModel.gameOver,
                 shape = RoundedCornerShape(10.dp),
                 colors = ButtonDefaults.buttonColors(
+                    // Quando il pulsante è attivo ha il fondo bianco e la scritta viola scuro
                     containerColor = colorResource(R.color.white),
                     contentColor = colorResource(R.color.violet),
+                    // Quando il pulsante è disattivato ha fondo lilla e scritta bianca
                     disabledContainerColor = colorResource(R.color.light_white),
                     disabledContentColor = colorResource(R.color.white)),
                 border = BorderStroke(1.dp, colorResource(R.color.white)),

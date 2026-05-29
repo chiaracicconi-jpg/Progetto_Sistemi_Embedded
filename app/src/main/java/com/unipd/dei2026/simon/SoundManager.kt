@@ -4,7 +4,10 @@ import android.content.Context
 import android.media.AudioAttributes
 import android.media.SoundPool
 
+//la classe SoundManager gestisce e riproduce i suoni brevi contenuti nei file audio contenuti nella risorsa raw
 class SoundManager(context: Context) {
+
+    //inizializzazione di SounPool
     private val soundPool: SoundPool = SoundPool.Builder()
         .setMaxStreams(6)
         .setAudioAttributes(
@@ -15,6 +18,8 @@ class SoundManager(context: Context) {
         )
         .build()
 
+    //inizializzazione della mappa dei suoni, in cui la chiave è il carattere corrispondente al bottone colorato
+    // e il valore corrisponde alla sua risorsa audio corrispondente
     private val beepSounds: Map<Char, Int> = mapOf(
             'R' to soundPool.load(context, R.raw.red, 1),
             'M' to soundPool.load(context, R.raw.magenta, 1),
@@ -24,6 +29,7 @@ class SoundManager(context: Context) {
             'B' to soundPool.load(context, R.raw.blue, 1)
     )
 
+    //la funzione playSound gestisce la riproduzione del suono
     fun playSound(char:Char){
         val selectedSound= beepSounds[char]
         if (selectedSound!=null && selectedSound!=0){
@@ -31,6 +37,7 @@ class SoundManager(context: Context) {
         }
     }
 
+    //la funzione release() svuota la RAM dai suoni scaricati quando l'activity viene distrutta evitando il memory leak
     fun release(){
         soundPool.release()
     }

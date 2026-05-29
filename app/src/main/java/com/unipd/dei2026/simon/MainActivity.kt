@@ -20,8 +20,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
 import androidx.navigation.navArgument
 
-// La class Main Activity viene costruita prendendo come modello l'applicazione Secret Message
-//Inserisco al suo interno le due schermate Activity1 e Activity2
+// La class Main Activity viene costruita prendendo come modello l'applicazione Secret Message e ReciclerSimple
+//Inserisco al suo interno le schermate GameScreen, MatchHistory, DetailActivity
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -32,6 +32,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             SimonTheme {
                 val navController = rememberNavController()
+                // passo il ViewModel definito in una schermata apposita nella MainActivity e poi all'interno delle tre schermate
                 val mainViewModel: SimonViewModel=viewModel()
 
                 // Creo lo Scaffold che costituirà l'impalcatura del mio codice,
@@ -39,12 +40,13 @@ class MainActivity : ComponentActivity() {
 
                 Scaffold(modifier = Modifier.fillMaxSize()
 
-                                    // nel metodo  verticalGradient() creo la lista contenente i colori che andrò a sfumare(viola_chiaro, viola)
-                                    .background(brush = Brush.verticalGradient(colors=listOf(Color(0xF32E1745), Color(0xFF7B50A4), Color(0xFFE6E6FA),Color(0xFF7B50A4), Color(0xF32E1745) ))),
+                                    // nel metodo  verticalGradient() creo la lista contenente i colori che andrò a sfumare(lilla, viola_chiaro, viola_scuro)
+                                    .background(brush = Brush.verticalGradient(colors=listOf(Color(0xF32E1745), Color(0xFF7B50A4), Color(0xFFD0BCFF),Color(0xFF7B50A4), Color(0xF32E1745) ))),
 
                         //imposto lo sfondo trasparente, altrimenti otterrò uno sfondo bianco di default
                         containerColor = Color.Transparent) { innerPadding ->
                     NavHost(
+                        //imposto come schermata iniziale MatchHistory, pertanto la collego come destinazione iniziale
                         navController = navController, startDestination = "matchHistory",
                         modifier = Modifier.padding(innerPadding)
                     ) {
@@ -54,16 +56,20 @@ class MainActivity : ComponentActivity() {
                             GameScreen(
                                 simonViewModel = mainViewModel,
                                 // definisco la funzione di callback per il composable GameScreen, onButtonClicked.
-                                //onButtonClicked passa come parametro una stringa contente l'elenco delle partite giocate (gestito in MatchHistory)
-                                // Importo la classe Uri dalla libreria Android (import android.net.Uri) che gestisce l'utilizzo dei caratteri non sicuri
-                                //nella stringa che le viene passata (playedMatches), che contiene il carattere"|".
+                                //onButtonClicked mi garantisce il passaggio alla MatchHistory (tramite il pusante "End" o "Back" di sistema)
                                 onButtonClicked={ navController.navigate("matchHistory")}
                             )
                         }
                         composable("matchHistory"){
                             MatchHistory(
                                 simonViewModel = mainViewModel,
+                                // definisco la funzione di callback per MatchHistory, onPlayClicked.
+                                //onPlayClicked mi garantisce il passaggio alla GameScreen tramite il floating action button
                                 onPlayClicked={navController.navigate("gameScreen")},
+                                // definisco la funzione di callback per MatchHistory, onMatchClicked.
+                                //onMatchClicked mi garantisce il passaggio alla DetailScreen dei dati della partita (punteggio, sequenza)
+                                //utilizzo il metodo Uri.encode() per passare in modo sicuro la sequenza
+                                //la navigazione mi gestisce la rotta alla nuova schermata
                                 onMatchClicked={score, data->
                                     val encoded=Uri.encode(data)
                                     navController.navigate("detail/$score/$encoded")
@@ -71,6 +77,7 @@ class MainActivity : ComponentActivity() {
                             )
                         }
                         composable(
+                            //la DetailScreen viene gestita come l'omonima schermata in RecyclerSimple
                             route="detail/{score}/{data}",
                             arguments=listOf(
                                 navArgument("score") {type=NavType.IntType},
