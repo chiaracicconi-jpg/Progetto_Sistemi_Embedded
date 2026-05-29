@@ -5,4 +5,6 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 
 @Entity(tableName="game_table")
-data class Game(@PrimaryKey @ColumnInfo(name="game") val game:String )
+data class Game( @ColumnInfo(name="game") val game:String,
+    @PrimaryKey(autoGenerate = true) val id: Int=0
+)

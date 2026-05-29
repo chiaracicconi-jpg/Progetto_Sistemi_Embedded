@@ -206,7 +206,7 @@ private fun MatchRow(
 ){
     Row(
         modifier = Modifier
-            .fillMaxSize()
+            .fillMaxWidth()
             .padding(2.dp)
             .clickable(onClick=onClick)
     ) {

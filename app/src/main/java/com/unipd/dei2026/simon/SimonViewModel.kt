@@ -57,6 +57,8 @@ class SimonViewModel(application:Application,
         get()=state["computerIndex"] ?: 0
         set(value) {state["computerIndex"]=value}
 
+    private var computerJob:kotlinx.coroutines.Job?=null
+
     init{
         val gamesDao= GameRoomDatabase.getDatabase(application).gameDao()
         repository= GameRepository(gamesDao)
@@ -106,7 +108,8 @@ class SimonViewModel(application:Application,
     }
 
     private fun computerTurn(newColor: Boolean=true){
-            viewModelScope.launch{
+        computerJob?.cancel()
+        computerJob= viewModelScope.launch{
                 isComputerTurn=true
                 playerIndex=0
 
@@ -182,6 +185,7 @@ class SimonViewModel(application:Application,
     }
 
     fun resetGame(){
+        computerJob?.cancel()
         t=""
         startMatch=false
         isComputerTurn=false

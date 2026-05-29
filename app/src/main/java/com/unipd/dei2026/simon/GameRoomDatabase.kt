@@ -9,7 +9,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-@Database(entities = [Game::class], version=1)
+@Database(entities = [Game::class], version=2)
 abstract class GameRoomDatabase: RoomDatabase() {
 
     abstract fun gameDao(): GameDao
