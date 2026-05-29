@@ -217,6 +217,60 @@ fun GameScreen( simonViewModel: SimonViewModel,
             }
         }
     }
+    if (simonViewModel.chooseLevel==true) {
+        Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+            Box(
+                modifier = Modifier
+                    .padding(10.dp)
+                    .height(200.dp)
+                    .width(290.dp)
+                    .background(colorResource(R.color.light_black)),
+                contentAlignment = Alignment.Center
+            ) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    Text(
+                        modifier=Modifier.padding(6.dp),
+                        text=stringResource(R.string.chooseLevel),
+                        color = colorResource(R.color.white),
+                        style=TextStyle(fontSize = 25.sp, fontFamily = FontText )
+                    )
+                    Spacer(modifier=Modifier.height(15.dp))
+                    Row(modifier=Modifier.padding(5.dp)) {
+                        Button(
+                            onClick={ simonViewModel.levelHard(false)
+                                simonViewModel.chooseYourLevel(false)
+                                    simonViewModel.startGame()},
+                            colors = ButtonDefaults.buttonColors(containerColor = colorResource(R.color.buttonBlue), contentColor = colorResource(R.color.white)),
+                            shape = RoundedCornerShape(5.dp),
+                            border = BorderStroke(1.dp, colorResource(R.color.white))
+                        ){
+                            Text(modifier=Modifier.padding(2.dp),
+                                text=stringResource(R.string.easy),
+                                style=TextStyle(fontFamily = FontButtons)
+                            )
+                        }
+                        Spacer(modifier=Modifier.width(10.dp))
+                        Button(
+                            onClick={ simonViewModel.levelHard(true)
+                                simonViewModel.chooseYourLevel(false)
+                                    simonViewModel.startGame()},
+                            colors = ButtonDefaults.buttonColors(containerColor = colorResource(R.color.buttonRed), contentColor = colorResource(R.color.white)),
+                            shape = RoundedCornerShape(5.dp),
+                            border = BorderStroke(1.dp, colorResource(R.color.white))
+                        ){
+                            Text(modifier=Modifier.padding(2.dp),
+                                text=stringResource(R.string.hard),
+                                style=TextStyle(fontFamily = FontButtons)
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
 
 }
 
@@ -394,8 +448,7 @@ fun CreateStringButtons(
                     //questa funzionalità della classe Button,
                     //avvia al Click la partita e
                     // viene disattivato il pulsante successivamente
-                    viewModel.startGame()
-                    viewModel.chooseLevel
+                    viewModel.chooseYourLevel(true)
                 },
                 enabled=!viewModel.startMatch && !viewModel.gameOver,
                 shape = RoundedCornerShape(10.dp),

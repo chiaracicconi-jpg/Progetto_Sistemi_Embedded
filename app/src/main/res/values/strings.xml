@@ -5,6 +5,8 @@
     <string name="pause">Pause</string>
     <string name="turn">Now it is your turn !</string>
     <string name="resume">Resume</string>
-
+    <string name="chooseLevel">Choose Your Mode</string>
+    <string name="hard">Hard</string>
+    <string name="easy">Easy</string>
 
 </resources>

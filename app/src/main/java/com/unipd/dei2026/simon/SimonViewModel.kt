@@ -43,7 +43,7 @@ class SimonViewModel(application:Application,
 
     var pressed: Boolean by state.saveable{mutableStateOf(false)}
     var isPaused: Boolean by state.saveable{mutableStateOf(false)}
-    var chooseLevel:Boolean by state.saveable { mutableStateOf(true) }
+    var chooseLevel:Boolean by state.saveable { mutableStateOf(false) }
     var hardMode: Boolean by state.saveable { mutableStateOf(true) }
 
 
@@ -88,6 +88,10 @@ class SimonViewModel(application:Application,
 
     fun levelHard(isHard:Boolean){
         hardMode=isHard
+    }
+
+    fun chooseYourLevel(isChoosen:Boolean){
+        chooseLevel=isChoosen
     }
     fun buttonEnabled(isEnabled:Boolean){
         enabled=isEnabled
@@ -148,9 +152,9 @@ class SimonViewModel(application:Application,
             playerIndex+=1
             if (playerIndex==computerSeq.length){
                 isComputerTurn=true
-                t=""
                 viewModelScope.launch{
                     delay(800)
+                    t=""
                     computerTurn()
                 }
             }
@@ -189,7 +193,7 @@ class SimonViewModel(application:Application,
         pressed=false
         isPaused=false
         computerIndex=0
-
+        chooseLevel=false
     }
 
 }
